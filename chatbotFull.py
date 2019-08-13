@@ -1,4 +1,4 @@
-
+from __future__ import print_function
 #Librerias para el funcionamiento del chatbot
 import httplib2
 import os
@@ -35,12 +35,25 @@ from kivy.clock import Clock
 from kivy.graphics import Color, Rectangle
 from kivy.uix.image import Image
 
+#Librerias para vision
+import requests
+import json
+import cv2
+
+#Hilo
+import threading
+import time
+from kivy.clock import mainthread
+
 imagen = '0'
+imagenMuestra = ''
+i = 0
 
 #Pantalla de menu principal--------------------------------------------------------------------------
 class MenuWindow(FloatLayout):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        global imagenMuestra
 
         self.titulo = Label(markup=True, text="Sistema Inteligente UPV" , size_hint=(0.8, 0.2), pos_hint= {"x":0.1, "y":0.7},
             font_size = (Window.size[0]**2 + Window.size[1]**2) / 14**4)
@@ -49,18 +62,65 @@ class MenuWindow(FloatLayout):
 
         self.btn.bind(on_press=self.chatbot_pantalla)
 
+        imagenMuestra = Image(source='imagen/imagen0.png', size_hint =(0.5,0.5), pos_hint ={"x": 0.3, "y":0.2})
+
+
         with self.canvas:
             Rectangle(pos= self.pos, size= (Window.size[0],Window.size[1]), source = 'fondo.jpg')
             Rectangle(pos=(Window.size[0]*0.05,Window.size[1]*0.8), size= (Window.size[0]*0.15,Window.size[1]*0.15), source = 'logo.png')
 
         # Add text widget to the layout
+        #self.add_widget(imagenMuestra)
         self.add_widget(self.titulo)
-        self.add_widget(self.btn)
+        #self.add_widget(self.btn)
+        self.iniciar_hilo()
 
     def chatbot_pantalla(self, _):
         sistema.create_chat_page()
         sistema.screen_manager.current = 'chatbot'
         sistema.screen_manager.transition.direction = "left"
+
+    def iniciar_hilo(self, *args):
+        t = threading.Thread(target=self.worker)
+        t.start()
+
+    def worker(self):
+        global i
+        i+=1
+        self.update_label(i)
+
+
+    @mainthread
+    def update_label(self,i):
+        addr = 'http://192.168.43.105:5000'
+        test_url = addr + '/api/test'
+
+        # prepare headers for http request
+        content_type = 'image/jpeg'
+        headers = {'content-type': content_type}
+
+        cam = cv2.VideoCapture(0)
+        ret_val, img = cam.read()
+        cv2.imwrite("imagen/imagen"+ str(i) +".png",img)
+        # encode image as jpeg
+        _, img_encoded = cv2.imencode('.png', img)
+
+        # send http request with image and receive response
+        try:
+            response = requests.post(test_url, data=img_encoded.tostring(), headers=headers)
+            # decode response
+            print(json.loads(response.text))
+        except:
+            print('error')
+
+        cv2.destroyAllWindows()
+        #time.sleep(1)
+        imagen = 'imagen/imagen'+ str(i) +'.png'
+        imagenMuestra = Image(source=imagen, size_hint =(0.5,0.5), pos_hint ={"x": 0.3, "y":0.2})
+        self.add_widget(imagenMuestra)
+        os.remove(imagen)
+        self.iniciar_hilo()
+
 
 #------------------------------------------------------------------------------------------------------
 
@@ -242,12 +302,12 @@ class ScrollableLabel(ScrollView):
         global imagen
         print(imagen)
         if(imagen != '0'):
-            imagenVer = Image(source=imagen, size = (250,120) , size_hint=(None, None))       
+            imagenVer = Image(source=imagen, size = (250,120) , size_hint=(None, None))
             self.layout.add_widget(imagenVer)
             imagen = '0'
 
         self.scroll_to(texto)
-        
+
 
     def update_chat_history_layout(self, _=None):
         # Set layout height to whatever height of chat history text is + 15 pixels
@@ -283,5 +343,7 @@ if __name__ == "__main__":
     #Window.fullscreen = True
     sistema = MyMainApp()
     sistema.run()
+
+
 
 #-----------------------------------------------------------------------------------------------
