@@ -49,6 +49,8 @@ imagen = '0'
 imagenMuestra = ''
 i = 0
 persona = ''
+validacion = ''
+
 
 #Pantalla de menu principal--------------------------------------------------------------------------
 class MenuWindow(FloatLayout):
@@ -63,12 +65,12 @@ class MenuWindow(FloatLayout):
 
         self.btn.bind(on_press=self.chatbot_pantalla)
 
-        imagenMuestra = Image(source='imagen/imagen0.png', size_hint =(0.5,0.5), pos_hint ={"x": 0.3, "y":0.2})
+        #imagenMuestra = Image(source='imagen/imagen0.png', size_hint =(0.5,0.5), pos_hint ={"x": 0.3, "y":0.2})
 
 
         with self.canvas:
             Rectangle(pos= self.pos, size= (Window.size[0],Window.size[1]), source = 'fondo.jpg')
-            Rectangle(pos=(Window.size[0]*0.05,Window.size[1]*0.8), size= (Window.size[0]*0.15,Window.size[1]*0.15), source = 'logo.png')
+            Rectangle(pos=(Window.size[0]*0.05,Window.size[1]*0.8), size= (Window.size[0]*0.2,Window.size[1]*0.2), source = 'logo.png')
 
         # Add text widget to the layout
         #self.add_widget(imagenMuestra)
@@ -76,7 +78,7 @@ class MenuWindow(FloatLayout):
         #self.add_widget(self.btn)
         self.iniciar_hilo()
 
-    def chatbot_pantalla(self, _):
+    def chatbot_pantalla(self):
         sistema.create_chat_page()
         sistema.screen_manager.current = 'chatbot'
         sistema.screen_manager.transition.direction = "left"
@@ -93,8 +95,8 @@ class MenuWindow(FloatLayout):
 
     @mainthread
     def update_label(self,i):
-        global persona
-        addr = 'http://192.168.43.105:5000'
+        global persona,validacion
+        addr = 'http://192.168.0.103:5000'
         test_url = addr + '/api/test'
 
         # prepare headers for http request
@@ -112,8 +114,6 @@ class MenuWindow(FloatLayout):
             response = requests.post(test_url, data=img_encoded.tostring(), headers=headers)
             # decode response
             print(json.loads(response.text))
-            if(json.loads(response.text) != 'Desconocido'):
-                persona = json.loads(response.text)
         except:
             print('error')
 
@@ -123,8 +123,27 @@ class MenuWindow(FloatLayout):
         imagenMuestra = Image(source=imagen, size_hint =(0.5,0.5), pos_hint ={"x": 0.3, "y":0.2})
         self.add_widget(imagenMuestra)
         os.remove(imagen)
-        self.iniciar_hilo()
-
+        mensaje = ''
+        try:
+            mensaje = str(json.loads(response.text))
+            if(mensaje != 'Desconocido'):
+                persona = mensaje
+            else:
+                mensaje = ''
+        except:
+            mensaje = ''
+        if(mensaje == ''):
+            self.iniciar_hilo()
+        else:
+            if(validacion == ''):
+                validacion = mensaje
+                self.iniciar_hilo()
+            else:
+                if(validacion == mensaje):
+                    self.chatbot_pantalla()
+                else:
+                    validacion = ''
+                    self.iniciar_hilo()
 
 #------------------------------------------------------------------------------------------------------
 
@@ -190,11 +209,11 @@ class ChatBotWindow(GridLayout):
 
 
         # Create a new trainer for the chatbot
-        self.trainer = ChatterBotCorpusTrainer(self.chatbot)
+        #self.trainer = ChatterBotCorpusTrainer(self.chatbot)
 
-        self.trainer.train("./datos.yml")
+        #self.trainer.train("./datos.yml")
 
-        self.history.update_chat_history('[color=20dd20]ChatBot[/color] > Bienvenido al sistema de Ayuda UPV' + str(persona) + ' para comenzar puedes preguntarme por ayuda, yo te guiaré.', 2)
+        self.history.update_chat_history('[color=20dd20]ChatBot[/color] > Bienvenido al sistema de Ayuda UPV ' + str(persona) + ' para comenzar puedes preguntarme por ayuda, yo te guiaré.', 2)
 
 
     def menu_pantalla(self, _):
@@ -227,7 +246,6 @@ class ChatBotWindow(GridLayout):
             vali = Validar()
             imagen = '0'
             imagen = vali.validar(bot_response,persona)
-            print(imagen)
 
             self.history.update_chat_history('[color=20dd20]ChatBot[/color] > ' + str(bot_response), 2)
 
@@ -294,7 +312,6 @@ class ScrollableLabel(ScrollView):
 
         self.layout.add_widget(texto)
         global imagen
-        print(imagen)
         if(imagen != '0'):
             imagenVer = Image(source=imagen, size = (250,120) , size_hint=(None, None))
             self.layout.add_widget(imagenVer)
@@ -334,7 +351,7 @@ class MyMainApp(App):
 
 
 if __name__ == "__main__":
-    #Window.fullscreen = True
+    Window.fullscreen = True
     sistema = MyMainApp()
     sistema.run()
 

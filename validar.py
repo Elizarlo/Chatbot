@@ -77,13 +77,15 @@ class Validar:
 			matricula = '1630099'
 			correo = '1630099@upv.edu.mx'
 
+		nombre = 'Eluis Carlo Ramos Lucio'
+		curp = 'RALE980909HTSMCL09'
+		matricula = '1630261'
+		correo = '1630261@upv.edu.mx'
 
 
 
 		dc = Documento()
 		em = EnviarEmail()
-		video = Video()
-		foto = Foto()
 
 		if (str(mensaje) == "aqui esta la cancha futbol"):
 			return 'fotos/cancha.jpg'
@@ -121,9 +123,7 @@ class Validar:
 			return 'fotos/edificioh.jpg'
 		if (str(mensaje) == "edificio i"):
 			return 'fotos/edificioi.jpg'
-		if (str(mensaje) == "aqui esta el video promocional"):
-			video.mainVideo('video/promocional1.mp4')
-			return
+
 		if (str(mensaje) == "enviare la referencia de constancia"):
 			tipoArchivo = 'constancia'
 
