@@ -12,7 +12,7 @@ class Validar:
 		return
 
 
-	def validar(self, mensaje):
+	def validar(self, mensaje,persona):
 		print(str(mensaje))
 		if (mensaje == None):
 			mensaje = 'Recuperado'
@@ -20,11 +20,65 @@ class Validar:
 		mixer.init()
 		mixer.music.load('hello.mp3')
 		mixer.music.play()
-		nombre = 'Eluis Carlo Ramos Lucio'
-		curp = 'RALE980909HTSMCL09'
-		matricula = '1630261'
-		correo = '1630261@upv.edu.mx'
 		tipoArchivo = ''
+		if(str(persona) == 'Draven'):
+			nombre = 'Erick Draven Vega Rios'
+			curp = 'DRAV980505HYSMSI08'
+			matricula = '1630045'
+			correo = '1630045@upv.edu.mx'
+		elif(str(persona) == 'Caty'):
+			nombre = 'Catherine Alessandra Torres Charles'
+			curp = 'TORR981010HYSED01'
+			matricula = '1630060'
+			correo = '1630060@upv.edu.mx'
+		elif(str(persona) == 'Alfredo'):
+			nombre = 'Jesus Alfredo Cardenas Castillo'
+			curp = 'CATE980122HTSUWS92'
+			matricula = '1630065'
+			correo = '1630065@upv.edu.mx'
+		elif(str(persona) == 'Armando'):
+			nombre = 'José Armando Olvera Osuna'
+			curp = 'CATE980122HTSUWS92'
+			matricula = '1630066'
+			correo = '1630066@upv.edu.mx'
+		elif(str(persona) == 'Linda'):
+			nombre = 'Linda Margarita Rodríguez Terán'
+			curp = 'CATE980122HTSUWS92'
+			matricula = '1630098'
+			correo = '1630098@upv.edu.mx'
+		elif(str(persona) == 'Karen'):
+			nombre = 'Ana Karen Molina Pastrana'
+			curp = 'MOPA980409MTMCL08'
+			matricula = '1630261'
+			correo = '1630261@upv.edu.mx'
+		elif(str(persona) == 'Eluis'):
+			nombre = 'Eluis Carlo Ramos Lucio'
+			curp = 'RALE980909HTSMCL09'
+			matricula = '1630261'
+			correo = '1630261@upv.edu.mx'
+		elif(str(persona) == 'Fernanda'):
+			nombre = 'María Fernanda Baéz Zapata'
+			curp = 'BAEZ900606HFDKL92'
+			matricula = '1630386'
+			correo = '1630386@upv.edu.mx'
+		elif(str(persona) == 'Yu'):
+			nombre = 'Yu Hsiang Wang'
+			curp = 'WAXY900606HFDKL92'
+			matricula = '1630436'
+			correo = '1630436@upv.edu.mx'
+		elif(str(persona) == 'Alan'):
+			nombre = 'Héctor Alán De la Fuente Anaya'
+			curp = 'ANAY990606HFDKLl2'
+			matricula = '1630444'
+			correo = '1630444@upv.edu.mx'
+		elif(str(persona) == 'Genaro'):
+			nombre = 'Genaro Juan Sánchez Gallegos'
+			curp = 'SANG980505HTSMCK08'
+			matricula = '1630099'
+			correo = '1630099@upv.edu.mx'
+
+
+
 
 		dc = Documento()
 		em = EnviarEmail()

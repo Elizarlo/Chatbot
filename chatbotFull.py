@@ -48,6 +48,7 @@ from kivy.clock import mainthread
 imagen = '0'
 imagenMuestra = ''
 i = 0
+persona = ''
 
 #Pantalla de menu principal--------------------------------------------------------------------------
 class MenuWindow(FloatLayout):
@@ -92,6 +93,7 @@ class MenuWindow(FloatLayout):
 
     @mainthread
     def update_label(self,i):
+        global persona
         addr = 'http://192.168.43.105:5000'
         test_url = addr + '/api/test'
 
@@ -110,6 +112,8 @@ class MenuWindow(FloatLayout):
             response = requests.post(test_url, data=img_encoded.tostring(), headers=headers)
             # decode response
             print(json.loads(response.text))
+            if(json.loads(response.text) != 'Desconocido'):
+                persona = json.loads(response.text)
         except:
             print('error')
 
@@ -184,23 +188,13 @@ class ChatBotWindow(GridLayout):
             ]
         )
 
-        #### Esto va donde se desee llamar la clase
-        # Variables de prueba
-        nombre = 'Ana Karen Molina Pastrana'
-        curp = 'MOPA980409MTSLSN08'
-        matricula = '1630228'
-        correo = '1630228@upv.edu.mx'
-        tipoArchivo = 'historial'
-        dc = Documento()
-        #dc.main(nombre,curp,matricula,correo,tipoArchivo)
-
-        em = EnviarEmail()
-        #em.main(tipoArchivo)
 
         # Create a new trainer for the chatbot
         self.trainer = ChatterBotCorpusTrainer(self.chatbot)
 
         self.trainer.train("./datos.yml")
+
+        self.history.update_chat_history('[color=20dd20]ChatBot[/color] > Bienvenido al sistema de Ayuda UPV' + str(persona) + ' para comenzar puedes preguntarme por ayuda, yo te guiaré.', 2)
 
 
     def menu_pantalla(self, _):
@@ -232,7 +226,7 @@ class ChatBotWindow(GridLayout):
 
             vali = Validar()
             imagen = '0'
-            imagen = vali.validar(bot_response)
+            imagen = vali.validar(bot_response,persona)
             print(imagen)
 
             self.history.update_chat_history('[color=20dd20]ChatBot[/color] > ' + str(bot_response), 2)
