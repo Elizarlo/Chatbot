@@ -8,12 +8,10 @@ import os
 
 class Validar:
 	def __init__(self):
-		print('')
 		return
 
 
 	def validar(self, mensaje,persona):
-		print(str(mensaje))
 		if (mensaje == None):
 			mensaje = 'Recuperado'
 		os.system('google_speech -l en -o hello.mp3 "' + str(mensaje)  + '"')

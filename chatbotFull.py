@@ -50,6 +50,7 @@ imagenMuestra = ''
 i = 0
 persona = ''
 validacion = ''
+ip = '148.247.204.59'
 
 
 #Pantalla de menu principal--------------------------------------------------------------------------
@@ -58,7 +59,7 @@ class MenuWindow(FloatLayout):
         super().__init__(**kwargs)
         global imagenMuestra
 
-        self.titulo = Label(markup=True, text="Sistema Inteligente UPV" , size_hint=(0.8, 0.2), pos_hint= {"x":0.1, "y":0.7},
+        self.titulo = Label(markup=True, text="Sistema Inteligente UPV" , size_hint=(0.8, 0.2), pos_hint= {"x":0.4, "y":0.7},
             font_size = (Window.size[0]**2 + Window.size[1]**2) / 14**4)
 
         self.btn = Button(text ='Chat Bot', size_hint =(0.6,0.2), pos_hint ={"x": 0.2, "y":0.5})
@@ -69,8 +70,8 @@ class MenuWindow(FloatLayout):
 
 
         with self.canvas:
-            Rectangle(pos= self.pos, size= (Window.size[0],Window.size[1]), source = 'fondo.jpg')
-            Rectangle(pos=(Window.size[0]*0.05,Window.size[1]*0.8), size= (Window.size[0]*0.2,Window.size[1]*0.2), source = 'logo.png')
+            Rectangle(pos= self.pos, size= (Window.size[0],Window.size[1]), source = 'fondo.png')
+            Rectangle(pos=(Window.size[0]*0.8,Window.size[1]*0.8), size= (Window.size[0]*0.2,Window.size[1]*0.2), source = 'logo.png')
 
         # Add text widget to the layout
         #self.add_widget(imagenMuestra)
@@ -96,7 +97,7 @@ class MenuWindow(FloatLayout):
     @mainthread
     def update_label(self,i):
         global persona,validacion
-        addr = 'http://192.168.0.103:5000'
+        addr = 'http://'+ ip + ':5000'
         test_url = addr + '/api/test'
 
         # prepare headers for http request
@@ -120,7 +121,7 @@ class MenuWindow(FloatLayout):
         cv2.destroyAllWindows()
         #time.sleep(1)
         imagen = 'imagen/imagen'+ str(i) +'.png'
-        imagenMuestra = Image(source=imagen, size_hint =(0.5,0.5), pos_hint ={"x": 0.3, "y":0.2})
+        imagenMuestra = Image(source=imagen, size_hint =(0.4,0.55), pos_hint ={"x": 0.15, "y":0.350})
         self.add_widget(imagenMuestra)
         os.remove(imagen)
         mensaje = ''
@@ -351,7 +352,7 @@ class MyMainApp(App):
 
 
 if __name__ == "__main__":
-    Window.fullscreen = True
+    #Window.fullscreen = True
     sistema = MyMainApp()
     sistema.run()
 
