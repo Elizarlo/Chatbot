@@ -51,6 +51,7 @@ i = 0
 persona = ''
 validacion = ''
 ip = '148.247.204.59'
+ip = '192.168.0.103'
 
 
 #Pantalla de menu principal--------------------------------------------------------------------------
@@ -146,7 +147,7 @@ class MenuWindow(FloatLayout):
                     validacion = ''
                     self.iniciar_hilo()
 
-#------------------------------------------------------------------------------------------------------
+#---------------------screen_manager---------------------------------------------------------------------------------
 
 
 #Pantalla de chat bot--------------------------------------------------------------------------
@@ -213,7 +214,7 @@ class ChatBotWindow(GridLayout):
         #self.trainer = ChatterBotCorpusTrainer(self.chatbot)
 
         #self.trainer.train("./datos.yml")
-
+        print("soyr" + persona)
         self.history.update_chat_history('[color=20dd20]ChatBot[/color] > Bienvenido al sistema de Ayuda UPV ' + str(persona) + ' para comenzar puedes preguntarme por ayuda, yo te guiaré.', 2)
 
 
@@ -242,6 +243,11 @@ class ChatBotWindow(GridLayout):
             self.history.update_chat_history('[color=dd2020]Usuario[/color] >' + str(message), 1)
 
             bot_response = self.chatbot.get_response(message)
+            if(str(message) == 'salir'):
+                
+                sistema.create_menu_page()
+                sistema.screen_manager.current = 'menu'
+                sistema.screen_manager.transition.direction = "right"
             global imagen
 
             vali = Validar()
@@ -293,9 +299,11 @@ class ScrollableLabel(ScrollView):
         # by creating a layout and placing two widgets inside it
         # Layout is going to have one collumn and and size_hint_y set to None,
         # so height wo't default to any size (we are going to set it on our own)
+        #self.clear_widgets()
         self.layout = GridLayout(cols=1, size_hint_y=None)
         self.layout.bind(minimum_height= self.layout.setter("height"))
         self.add_widget(self.layout)
+
 
     # Methos called externally to add new message to the chat history
     def update_chat_history(self, message, tipo):
@@ -335,13 +343,13 @@ class ScrollableLabel(ScrollView):
 
 #Main--------------------------------------------------------------------------------------------
 class MyMainApp(App):
+
     def build(self):
         self.screen_manager = ScreenManager()
         self.menu = MenuWindow()
         screen = Screen(name='menu')
         screen.add_widget(self.menu)
         self.screen_manager.add_widget(screen)
-
         return self.screen_manager
 
     def create_chat_page(self):
@@ -349,6 +357,9 @@ class MyMainApp(App):
         screen = Screen(name='chatbot')
         screen.add_widget(self.chatbot)
         self.screen_manager.add_widget(screen)
+
+    def create_menu_page(self):
+        self.menu.iniciar_hilo()
 
 
 if __name__ == "__main__":
